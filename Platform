@@ -1,0 +1,45 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Platform : MonoBehaviour
+{
+    public GameObject[] waypoints;
+    public int platformspeed = 2;
+    private int WaypointsIndex = 0;
+
+    void Update()
+    {
+        MouPlataforma();
+    }
+
+    void MouPlataforma()
+    {
+        if (Vector3.Distance(transform.position, waypoints[WaypointsIndex].transform.position) < 0.1f)
+        {
+            WaypointsIndex++;
+
+            if (WaypointsIndex >= waypoints.Length)
+            {
+                WaypointsIndex = 0;
+            }
+        }
+        transform.position = Vector3.MoveTowards(transform.position, waypoints[WaypointsIndex].transform.position, platformspeed * Time.deltaTime);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.transform.SetParent(transform);
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.transform.SetParent(null);
+        }
+    }
+}
