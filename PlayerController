@@ -1,0 +1,43 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody), typeof(BoxCollider))]
+
+public class PlayerController : MonoBehaviour
+{
+   [SerializeField] public Rigidbody _rigidbody;
+   [SerializeField] private FixedJoystick _joystick;
+   [SerializeField] public Animator _animator;
+
+   [SerializeField] private float _moveSpeed;
+
+   public float jumpforce = 5;
+   public float groundDistance = 0f;
+
+   public bool IsGrounded()
+   {
+    return Physics.Raycast(transform.position, Vector3.down, groundDistance);
+   }
+
+   private void Update() 
+   {
+    _rigidbody.velocity = new Vector3(_joystick.Horizontal * _moveSpeed, _rigidbody.velocity.y, _joystick.Vertical * _moveSpeed);
+
+    if (_joystick.Horizontal != 0 || _joystick.Vertical != 0)
+    {
+        transform.rotation = Quaternion.LookRotation(_rigidbody.velocity);
+        _animator.SetBool("camina", true);
+    }
+    else 
+    {
+        _animator.SetBool("camina", false);
+    }
+   }
+
+   public void saltar()
+   {
+    _rigidbody.velocity = new Vector3(_joystick.Horizontal * _moveSpeed, jumpforce, _joystick.Vertical * _moveSpeed);
+    _animator.SetTrigger("salta");
+    }
+}
